@@ -39,7 +39,7 @@ class ArrayNodeTest {
 	@Test
 	void testIterator() {
 		var sut = new ArrayNode(List.of(new StringNode("test1"), new StringNode("test2")));
-		for (Node node : sut) {
+		for (JsonNode node : sut) {
 			assertThat(node).isNotNull();
 		}
 	}

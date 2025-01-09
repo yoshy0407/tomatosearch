@@ -2,25 +2,33 @@ package com.github.tomatosearch.template.node;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 
+import com.github.tomatosearch.template.exception.TemplateInternalException;
 import com.github.tomatosearch.template.node.text.TextBuilder;
 
-public class ObjectNode implements Node, Iterable<Entry<String, Node>> {
+/**
+ * JSONオブジェクトを表すクラスです
+ *
+ * @author yoshiokahiroshi
+ * @since 1.0.0
+ */
+public class ObjectNode implements JsonNode, Iterable<Entry<String, JsonNode>> {
 
 	private int nodeLevel = 0;
-	
-	private final LinkedHashMap<String, Node> values;
-	
+
+	private final LinkedHashMap<String, JsonNode> values;
+
 	public ObjectNode() {
 		this(new LinkedHashMap<>());
 	}
-	
-	public ObjectNode(LinkedHashMap<String, Node> values) {
+
+	public ObjectNode(LinkedHashMap<String, JsonNode> values) {
 		this.values = values;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(values);
@@ -37,8 +45,8 @@ public class ObjectNode implements Node, Iterable<Entry<String, Node>> {
 		ObjectNode other = (ObjectNode) obj;
 		return Objects.equals(values, other.values);
 	}
-	
-	public void put(String field, Node node) {
+
+	public void put(String field, JsonNode node) {
 		if (node instanceof ArrayNode arrayNode) {
 			arrayNode.setNodeLevel(nodeLevel + 1);
 			this.values.put(field, arrayNode);
@@ -52,19 +60,24 @@ public class ObjectNode implements Node, Iterable<Entry<String, Node>> {
 
 		this.values.put(field, node);
 	}
-	
-	public Node get(String field) {
+
+	public JsonNode get(String field) {
 		return this.values.get(field);
 	}
 
-	public Node remove(String field) {
+	public JsonNode remove(String field) {
 		return this.values.remove(field);
 	}
-	
+
 	void setNodeLevel(int nodeLevel) {
 		this.nodeLevel = nodeLevel;
 	}
-	
+
+	@Override
+	public String evaluate(Map<String, Object> parameter) throws TemplateInternalException {
+		return toJson();
+	}
+
 	@Override
 	public String toJson() {
 		TextBuilder builder = new TextBuilder();
@@ -79,22 +92,17 @@ public class ObjectNode implements Node, Iterable<Entry<String, Node>> {
 	@Override
 	public String toJsonPretty(int indentSize) {
 		TextBuilder builder = new TextBuilder();
-		builder.append("{").whitespace().nl();
+		builder.append("{").nl();
 		values.entrySet().forEach(e -> {
-			builder
-				.indent(indentSize * nodeLevel)
-				.indent(indentSize)
-				.field(e.getKey(), e.getValue().toJsonPretty(indentSize + indentSize))
-				.comma()
-				.nl();
+			builder.indent(indentSize * nodeLevel).indent(indentSize)
+					.field(e.getKey(), e.getValue().toJsonPretty(indentSize + indentSize)).comma().nl();
 		});
-		builder.removeEnd(2).nl()
-			.indent(indentSize * nodeLevel).append("}");
+		builder.removeEnd(2).nl().indent(indentSize * nodeLevel).append("}");
 		return builder.toString();
 	}
 
 	@Override
-	public Iterator<Entry<String, Node>> iterator() {
+	public Iterator<Entry<String, JsonNode>> iterator() {
 		return this.values.entrySet().iterator();
 	}
 

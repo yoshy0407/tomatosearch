@@ -11,6 +11,12 @@ import java.util.regex.Pattern;
 
 import com.github.tomatosearch.template.ExpressionFunction;
 
+/**
+ * {@link ExpressionFunction}の標準的な実装です
+ *
+ * @author yoshiokahiroshi
+ * @since 1.0.0
+ */
 public class StandardExpressionFunction implements ExpressionFunction {
 
 	private static final char DEFAULT_ESCAPE_CHAR = '\\';

@@ -1,13 +1,30 @@
 package com.github.tomatosearch.template.node.value;
 
+import java.util.Map;
 import java.util.Objects;
 
-import com.github.tomatosearch.template.node.Node;
+import com.github.tomatosearch.template.exception.TemplateInternalException;
+import com.github.tomatosearch.template.node.JsonNode;
 
-public class NullNode implements Node {
+public class NullNode implements JsonNode {
 
 	private final String value = "null";
-	
+
+	@Override
+	public String evaluate(Map<String, Object> parameter) throws TemplateInternalException {
+		return toJson();
+	}
+
+	@Override
+	public String toJson() {
+		return value;
+	}
+
+	@Override
+	public String toJsonPretty(int indentSize) {
+		return toJson();
+	}
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(value);
@@ -23,16 +40,6 @@ public class NullNode implements Node {
 			return false;
 		NullNode other = (NullNode) obj;
 		return Objects.equals(value, other.value);
-	}
-
-	@Override
-	public String toJson() {
-		return value;
-	}
-
-	@Override
-	public String toJsonPretty(int indentSize) {
-		return toJson();
 	}
 
 }

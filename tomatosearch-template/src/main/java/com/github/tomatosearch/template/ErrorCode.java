@@ -11,7 +11,8 @@ public enum ErrorCode {
 	NOT_SUPPORT_NUMBER_TYPE("10006", "not support number type. type: {0}"),
 	CALICULATE_NOT_FOUND("10007", "caliculation operator is invalid. value: {0}"),
 	LOGICAL_NOT_FOUND("10008", "logical operator is invalid. value: {0}"),
-	UNKNOWN_OPERATOR("10009", "unknown operator. value: {0}");
+	UNKNOWN_OPERATOR("10009", "unknown operator. value: {0}"),
+	CONVERTER_NOT_FOUND("10010", "converter not found. value: {0}, type: {1}, targetClass: {2}");
 
 	private final String errorCode;
 
